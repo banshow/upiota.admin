@@ -1,6 +1,7 @@
 import React from 'react';
 import PromiseRender from './PromiseRender';
 import { CURRENT } from './index';
+import { isEmptyStr } from '../../utils/utils';
 
 function isPromise(obj) {
   return (
@@ -18,7 +19,7 @@ function isPromise(obj) {
  * @param { 通过的组件 Passing components } target
  * @param { 未通过的组件 no pass components } Exception
  */
-const checkPermissions = (authority, currentAuthority, target, Exception) => {
+const checkPermissions1 = (authority, currentAuthority, target, Exception) => {
   // 没有判定权限.默认查看所有
   // Retirement authority, return target;
   if (!authority) {
@@ -58,6 +59,26 @@ const checkPermissions = (authority, currentAuthority, target, Exception) => {
     }
   }
   throw new Error('unsupported parameters');
+};
+
+const checkPermissions = (authority, currentAuthority, target, Exception) => {
+  // 没有判定权限.默认查看所有
+  // Retirement authority, return target;
+  if (!authority) {
+    return target;
+  }
+
+  if (authority === 'noauth' && !isEmptyStr(currentAuthority)) {
+    return Exception;
+  }
+  if (authority === 'noauth' && isEmptyStr(currentAuthority)) {
+    return target;
+  }
+
+  if (isEmptyStr(currentAuthority)) {
+    return Exception;
+  }
+  return target;
 };
 
 export { checkPermissions };
